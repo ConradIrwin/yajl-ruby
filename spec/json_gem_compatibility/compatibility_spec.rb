@@ -155,7 +155,7 @@ describe "JSON Gem compatability API" do
       parsed_json = JSON.parse(json)
       @hash.should == parsed_json
       json = JSON.pretty_generate({1=>2})
-      test = "{\n  \"1\": 2\n}".chomp
+      test = "{\n  \"1\": 2\n}\n"
       test.should == json
       parsed_json = JSON.parse(json)
       {"1"=>2}.should == parsed_json

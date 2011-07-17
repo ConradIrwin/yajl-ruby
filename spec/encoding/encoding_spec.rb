@@ -62,7 +62,7 @@ describe "Yajl JSON encoder" do
    end
 
   it "should encode with :pretty turned on and a single space indent, to an IO" do
-    output = "{\n \"foo\": 1234\n}"
+    output = "{\n \"foo\": 1234\n}\n"
     obj = {:foo => 1234}
     io = StringIO.new
     encoder = Yajl::Encoder.new(:pretty => true, :indent => ' ')
@@ -72,7 +72,7 @@ describe "Yajl JSON encoder" do
   end
 
   it "should encode with :pretty turned on and a single space indent, and return a String" do
-    output = "{\n \"foo\": 1234\n}"
+    output = "{\n \"foo\": 1234\n}\n"
     obj = {:foo => 1234}
     encoder = Yajl::Encoder.new(:pretty => true, :indent => ' ')
     output = encoder.encode(obj)
@@ -80,7 +80,7 @@ describe "Yajl JSON encoder" do
   end
 
   it "should encode with :pretty turned on and a tab character indent, to an IO" do
-    output = "{\n\t\"foo\": 1234\n}"
+    output = "{\n\t\"foo\": 1234\n}\n"
     obj = {:foo => 1234}
     io = StringIO.new
     encoder = Yajl::Encoder.new(:pretty => true, :indent => "\t")
@@ -90,7 +90,7 @@ describe "Yajl JSON encoder" do
   end
 
   it "should encode with :pretty turned on and a tab character indent, and return a String" do
-    output = "{\n\t\"foo\": 1234\n}"
+    output = "{\n\t\"foo\": 1234\n}\n"
     obj = {:foo => 1234}
     encoder = Yajl::Encoder.new(:pretty => true, :indent => "\t")
     output = encoder.encode(obj)
@@ -98,7 +98,7 @@ describe "Yajl JSON encoder" do
   end
 
   it "should encode with it's class method with :pretty and a tab character indent options set, to an IO" do
-    output = "{\n\t\"foo\": 1234\n}"
+    output = "{\n\t\"foo\": 1234\n}\n"
     obj = {:foo => 1234}
     io = StringIO.new
     Yajl::Encoder.encode(obj, io, :pretty => true, :indent => "\t")
