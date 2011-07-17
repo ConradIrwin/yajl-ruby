@@ -56,6 +56,7 @@ yajl_gen_config(yajl_gen g, yajl_gen_option opt, ...)
 
     switch(opt) {
         case yajl_gen_beautify:
+        case yajl_gen_escape_solidus:
         case yajl_gen_validate_utf8:
             if (va_arg(ap, int)) g->flags |= opt;
             else g->flags &= ~opt;
