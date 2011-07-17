@@ -118,7 +118,7 @@ void yajl_encode_part(void * wrapper, VALUE obj, VALUE io) {
     int idx = 0;
     const unsigned char * buffer;
     const char * cptr;
-    unsigned int len;
+    size_t len;
     VALUE keys, entry, keyStr;
 
     if (io != Qnil || w->on_progress_callback != Qnil) {
@@ -216,7 +216,7 @@ void yajl_parser_wrapper_mark(void * wrapper) {
     }
 }
 
-void yajl_parse_chunk(const unsigned char * chunk, unsigned int len, yajl_handle parser) {
+void yajl_parse_chunk(const unsigned char * chunk, size_t len, yajl_handle parser) {
     yajl_status stat;
 
     stat = yajl_parse(parser, chunk, len);
@@ -242,7 +242,7 @@ static int yajl_found_boolean(void * ctx, int boolean) {
     return 1;
 }
 
-static int yajl_found_number(void * ctx, const char * numberVal, unsigned int numberLen) {
+static int yajl_found_number(void * ctx, const char * numberVal, size_t numberLen) {
     char buf[numberLen+1];
     buf[numberLen] = 0;
     memcpy(buf, numberVal, numberLen);
@@ -257,7 +257,7 @@ static int yajl_found_number(void * ctx, const char * numberVal, unsigned int nu
     return 1;
 }
 
-static int yajl_found_string(void * ctx, const unsigned char * stringVal, unsigned int stringLen) {
+static int yajl_found_string(void * ctx, const unsigned char * stringVal, size_t stringLen) {
     VALUE str = rb_str_new((const char *)stringVal, stringLen);
 #ifdef HAVE_RUBY_ENCODING_H
     rb_encoding *default_internal_enc = rb_default_internal_encoding();
@@ -271,7 +271,7 @@ static int yajl_found_string(void * ctx, const unsigned char * stringVal, unsign
     return 1;
 }
 
-static int yajl_found_hash_key(void * ctx, const unsigned char * stringVal, unsigned int stringLen) {
+static int yajl_found_hash_key(void * ctx, const unsigned char * stringVal, size_t stringLen) {
     yajl_parser_wrapper * wrapper;
     VALUE keyStr;
 #ifdef HAVE_RUBY_ENCODING_H
@@ -638,7 +638,7 @@ static VALUE rb_yajl_encoder_init(int argc, VALUE * argv, VALUE self) {
 static VALUE rb_yajl_encoder_encode(int argc, VALUE * argv, VALUE self) {
     yajl_encoder_wrapper * wrapper;
     const unsigned char * buffer;
-    unsigned int len;
+    size_t len;
     VALUE obj, io, blk, outBuff;
 
     GetEncoder(self, wrapper);

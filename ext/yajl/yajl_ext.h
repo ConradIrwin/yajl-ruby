@@ -64,13 +64,13 @@ static ID sym_allow_comments, sym_check_utf8, sym_pretty, sym_indent, sym_termin
 inline void yajl_check_and_fire_callback(void * ctx);
 inline void yajl_set_static_value(void * ctx, VALUE val);
 void yajl_encode_part(void * wrapper, VALUE obj, VALUE io);
-void yajl_parse_chunk(const unsigned char * chunk, unsigned int len, yajl_handle parser);
+void yajl_parse_chunk(const unsigned char * chunk, size_t len, yajl_handle parser);
 
 static int yajl_found_null(void * ctx);
 static int yajl_found_boolean(void * ctx, int boolean);
-static int yajl_found_number(void * ctx, const char * numberVal, unsigned int numberLen);
-static int yajl_found_string(void * ctx, const unsigned char * stringVal, unsigned int stringLen);
-static int yajl_found_hash_key(void * ctx, const unsigned char * stringVal, unsigned int stringLen);
+static int yajl_found_number(void * ctx, const char * numberVal, size_t numberLen);
+static int yajl_found_string(void * ctx, const unsigned char * stringVal, size_t stringLen);
+static int yajl_found_hash_key(void * ctx, const unsigned char * stringVal, size_t stringLen);
 static int yajl_found_start_hash(void * ctx);
 static int yajl_found_end_hash(void * ctx);
 static int yajl_found_start_array(void * ctx);
