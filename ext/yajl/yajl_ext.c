@@ -550,7 +550,6 @@ static unsigned char * defaultIndentString = (unsigned char *)"  ";
  */
 static VALUE rb_yajl_encoder_new(int argc, VALUE * argv, VALUE klass) {
     yajl_encoder_wrapper * wrapper;
-    yajl_gen_config cfg;
     VALUE opts, obj, indent;
     unsigned char *indentString = NULL, *actualIndent = NULL;
     int beautify = 0, htmlSafe = 0;
@@ -580,11 +579,15 @@ static VALUE rb_yajl_encoder_new(int argc, VALUE * argv, VALUE klass) {
     if (!indentString) {
       indentString = defaultIndentString;
     }
-    cfg = (yajl_gen_config){beautify, (const char *)indentString, htmlSafe};
 
     obj = Data_Make_Struct(klass, yajl_encoder_wrapper, yajl_encoder_wrapper_mark, yajl_encoder_wrapper_free, wrapper);
     wrapper->indentString = actualIndent;
-    wrapper->encoder = yajl_gen_alloc(&cfg, NULL);
+
+    // NULL because we're not overriding malloc.
+    wrapper->encoder = yajl_gen_alloc(NULL);
+    yajl_gen_config(wrapper->encoder, yajl_gen_beautify, beautify);
+    yajl_gen_config(wrapper->encoder, yajl_gen_escape_solidus, htmlSafe);
+
     wrapper->on_progress_callback = Qnil;
     if (opts != Qnil && rb_funcall(opts, intern_has_key, 1, sym_terminator) == Qtrue) {
         wrapper->terminator = rb_hash_aref(opts, sym_terminator);
