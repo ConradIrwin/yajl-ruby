@@ -97,6 +97,12 @@ describe "Yajl JSON encoder" do
     output.should == output
   end
 
+  it "should raise an exception with pretty turned on when indent is not a space character" do
+    lambda {
+      encoder = Yajl::Encoder.new(:pretty => true, :indent => "FAIL")
+    }.should raise_error(Yajl::EncodeError)
+  end
+
   it "should encode with it's class method with :pretty and a tab character indent options set, to an IO" do
     output = "{\n\t\"foo\": 1234\n}\n"
     obj = {:foo => 1234}

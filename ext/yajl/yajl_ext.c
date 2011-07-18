@@ -221,7 +221,7 @@ void yajl_parse_chunk(const unsigned char * chunk, size_t len, yajl_handle parse
 
     stat = yajl_parse(parser, chunk, len);
 
-    if (stat != yajl_status_ok && stat != yajl_status_insufficient_data) {
+    if (stat != yajl_status_ok) {
         unsigned char * str = yajl_get_error(parser, 1, chunk, len);
         VALUE errobj = rb_exc_new2(cParseError, (const char*) str);
         yajl_free_error(parser, str);
@@ -363,7 +363,6 @@ static int yajl_found_end_array(void * ctx) {
  */
 static VALUE rb_yajl_parser_new(int argc, VALUE * argv, VALUE klass) {
     yajl_parser_wrapper * wrapper;
-    yajl_parser_config cfg;
     VALUE opts, obj;
     int allowComments = 1, checkUTF8 = 1, symbolizeKeys = 0;
 
@@ -381,10 +380,15 @@ static VALUE rb_yajl_parser_new(int argc, VALUE * argv, VALUE klass) {
             symbolizeKeys = 1;
         }
     }
-    cfg = (yajl_parser_config){allowComments, checkUTF8};
 
     obj = Data_Make_Struct(klass, yajl_parser_wrapper, yajl_parser_wrapper_mark, yajl_parser_wrapper_free, wrapper);
-    wrapper->parser = yajl_alloc(&callbacks, &cfg, NULL, (void *)obj);
+
+    wrapper->parser = yajl_alloc(&callbacks, NULL, (void *)obj);
+
+    yajl_config(wrapper->parser, yajl_allow_comments, allowComments);
+    yajl_config(wrapper->parser, yajl_allow_multiple_values, 1);
+    yajl_config(wrapper->parser, yajl_dont_validate_strings, !checkUTF8);
+
     wrapper->nestedArrayLevel = 0;
     wrapper->nestedHashLevel = 0;
     wrapper->objectsFound = 0;
@@ -467,7 +471,7 @@ static VALUE rb_yajl_parser_parse(int argc, VALUE * argv, VALUE self) {
     }
 
     /* parse any remaining buffered data */
-    stat = yajl_parse_complete(wrapper->parser);
+    stat = yajl_complete_parse(wrapper->parser);
 
     if (wrapper->parse_complete_callback != Qnil) {
         yajl_check_and_fire_callback((void *)self);
@@ -585,6 +589,10 @@ static VALUE rb_yajl_encoder_new(int argc, VALUE * argv, VALUE klass) {
 
     // NULL because we're not overriding malloc.
     wrapper->encoder = yajl_gen_alloc(NULL);
+
+    if (!yajl_gen_config(wrapper->encoder, yajl_gen_indent_string, indentString)) {
+        rb_raise(cEncodeError, "'%s' is not only whitespace", indentString);
+    }
     yajl_gen_config(wrapper->encoder, yajl_gen_beautify, beautify);
     yajl_gen_config(wrapper->encoder, yajl_gen_escape_solidus, htmlSafe);
 
